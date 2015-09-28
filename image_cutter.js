@@ -62,20 +62,20 @@ var ImageCutter = function(options){
 	// Run through the options passed in and replace any missing options with the default values
 	if (!options){ options = default_options; }
 	for (var options_iii in default_options){
-		if (typeof options[options_iii] == 'undefined'){ options[options_iii] = default_options[options_iii]; }
+		if (typeof options[options_iii] === 'undefined'){ options[options_iii] = default_options[options_iii]; }
 	}
 	
 	// if we have starting selections or restrictions on size, we need to update our options.
-	if (options.minWidth != 0 || options.minHeight != 0){
+	if (options.minWidth !== 0 || options.minHeight !== 0){
 		options.startingSelection = true;
-		if (options.minWidth != 0){options.startingWidth = options.minWidth;}
-		if (options.minHeight != 0){options.startingHeight = options.minHeight;}
+		if (options.minWidth !== 0){options.startingWidth = options.minWidth;}
+		if (options.minHeight !== 0){options.startingHeight = options.minHeight;}
 	}
-	if (options.fixedWidth != 0){
+	if (options.fixedWidth !== 0){
 		options.startingSelection = true;
 		options.startingWidth = options.fixedWidth;
 	}
-	if (options.fixedHeight != 0){
+	if (options.fixedHeight !== 0){
 		options.startingSelection = true;
 		options.startingHeight = options.fixedHeight;
 	}
@@ -85,25 +85,25 @@ var ImageCutter = function(options){
 		options.startingHeight = 'full';
 	}
 	
-	// initialize our global variables
-	var mouseX, mouseY; // these are the mouse position coordinates when hovering over the shadowbox
-	var startX = 0, startY = 0; // these are the top left corner coordinates when making a selection
-	var clickX = 0, clickY = 0; // these are the coordinates of the mouse when clicking and dragging the crop area/resizing
-	var cropLeft = 0, cropTop = 0; // these are the left and top values at the moment the mouse clicks to drag the crop area
-	var cropWidth = 0, cropHeight = 0; // these are the width and height values at the moment the mouse clicks to resize
-	var origWidth, origHeight; // these are the original height and width, for zooming in and out
-	var resizeDir; // this variable will store which direction we need to resize when resizing
-	var zoomSet = 1, curZoom = 1; // default zoom - autoscale overwrites it / curZoom tracks what the current zoom is
-	var firstClick = true; // boolean switch to keep IE from repopulating hidden fields.
-	var clear_button, zoom_in_btn, zoom_out_btn; // declare these now in case we create these later
-	var ignoreRecrop = false; // if true, then an area is being moved, so don't create a new crop area
-	var ignoreMove = false; // if true, then an area is being resized, so don't move it.
-	var image_div = document.getElementById(options.id); // grab the div that holds the cropping image
-	var image = image_div.getElementsByTagName('img')[0]; // grab the image itself
-	var cropped_img_div_id = options.id + '_cropped_div'; // save the id of the cropping area div
-	var cropped_img_id = options.id + '_cropped_img'; // save the id of the cropping area image
-	var shadowbox, coord_form, shadowBoxOffset; // elements we will create later
-	var image_info = new Image(); // create an instance of the image so we can track when it loads ...
+	// initialize our object variables
+	var mouseX, mouseY, // these are the mouse position coordinates when hovering over the shadowbox
+		startX = 0, startY = 0, // these are the top left corner coordinates when making a selection
+		clickX = 0, clickY = 0, // these are the coordinates of the mouse when clicking and dragging the crop area/resizing
+		cropLeft = 0, cropTop = 0, // these are the left and top values at the moment the mouse clicks to drag the crop area
+		cropWidth = 0, cropHeight = 0, // these are the width and height values at the moment the mouse clicks to resize
+		origWidth, origHeight, // these are the original height and width, for zooming in and out
+		resizeDir, // this variable will store which direction we need to resize when resizing
+		zoomSet = 1, curZoom = 1, // default zoom - autoscale overwrites it / curZoom tracks what the current zoom is
+		firstClick = true, // boolean switch to keep IE from repopulating hidden fields.
+		clear_button, zoom_in_btn, zoom_out_btn, // declare these now in case we create these later
+		ignoreRecrop = false, // if true, then an area is being moved, so don't create a new crop area
+		ignoreMove = false, // if true, then an area is being resized, so don't move it.
+		image_div = document.getElementById(options.id), // grab the div that holds the cropping image
+		image = image_div.getElementsByTagName('img')[0], // grab the image itself
+		cropped_img_div_id = options.id + '_cropped_div', // save the id of the cropping area div
+		cropped_img_id = options.id + '_cropped_img', // save the id of the cropping area image
+		shadowbox, coord_form, shadowBoxOffset, // elements we will create later
+		image_info = new Image(); // create an instance of the image so we can track when it loads ...
 	image_info.src = image.src;
 	image_info.onload = init; // ... and off we go!
 	
@@ -135,7 +135,7 @@ var ImageCutter = function(options){
 		shadowbox.style.height = origHeight + "px";
 		shadowbox.style.cursor = 'pointer';
 		shadowbox.setAttribute('id', options.id+"_shadowbox");
-		if (options.shadowBoxClass != ''){
+		if (options.shadowBoxClass !== ''){
 			shadowbox.setAttribute('class', options.shadowBoxClass);
 		}
 		image_div.style.position = "relative";
@@ -145,7 +145,7 @@ var ImageCutter = function(options){
 		init_coord_form(); // create our form of hidden inputs and add it
 		
 		// add our extra buttons, if we need them
-		if (options.clearBtn == 'clear' || options.clearBtn == 'full'){ add_clearBtn(); }
+		if (options.clearBtn === 'clear' || options.clearBtn === 'full'){ add_clearBtn(); }
 		if (options.zoomBtn){ add_zoomBtn(); }
 		
 		// add our listeners
@@ -164,7 +164,7 @@ var ImageCutter = function(options){
 		}
 		
 		// if we need to autoscale the image...
-		if (options.autoScale == 'scaledown' || options.autoScale == 'fit'){
+		if (options.autoScale === 'scaledown' || options.autoScale === 'fit'){
 			autoscale();
 		} 
 		// we check if we should go ahead and highlight a selection ...
@@ -234,12 +234,12 @@ var ImageCutter = function(options){
 		document.getElementById(options.id+"_zoom").value = curZoom;
 		document.getElementById(options.id+"_x1").value = 0;
 		document.getElementById(options.id+"_y1").value = 0;
-		if (options.fixedRatio == '' || options.fixedRatio >= 1){
+		if (options.fixedRatio === '' || options.fixedRatio >= 1){
 			document.getElementById(options.id+"_width").value = origWidth;
 		} else { // if the fixedRatio is set, and the area is taller, we set width in terms of height
 			document.getElementById(options.id+"_width").value = (origWidth * options.fixedRatio);
 		}
-		if (options.fixedRatio == '' || options.fixedRatio <= 1){
+		if (options.fixedRatio === '' || options.fixedRatio <= 1){
 			document.getElementById(options.id+"_height").value = origHeight;
 		} else { // if the fixedRatio is set, and the area is wider, we set height in terms of width
 			document.getElementById(options.id+"_height").value = (origHeight / options.fixedRatio);
@@ -252,13 +252,13 @@ var ImageCutter = function(options){
 		clear_button.setAttribute('type', 'button');
 		clear_button.setAttribute('class', options.clearBtnClass);
 		clear_button.setAttribute('value', options.clearBtnValue);
-		if (options.clearBtn == 'clear'){ // if they want clear button to clear all, attach clear_selection function
+		if (options.clearBtn === 'clear'){ // if they want clear button to clear all, attach clear_selection function
 			if (clear_button.addEventListener){ // non-IE
 				clear_button.addEventListener('click', clear_selection, false);
 			} else { // IE
 				clear_button.attachEvent('onclick', clear_selection);
 			}
-		} else if (options.clearBtn == 'full'){ // if they want clear button to select all, attach full_selection function
+		} else if (options.clearBtn === 'full'){ // if they want clear button to select all, attach full_selection function
 			if (clear_button.addEventListener){ // non-IE
 				clear_button.addEventListener('click', full_selection, false);
 			} else { // IE
@@ -430,7 +430,7 @@ var ImageCutter = function(options){
 		var heightComparison = origHeight / parentHeight;
 		
 		// test to see if we need to scale
-		if (options.autoScale == 'fit' || (options.autoScale == 'scaledown' && (widthComparison > 1 || heightComparison > 1))){
+		if (options.autoScale === 'fit' || (options.autoScale === 'scaledown' && (widthComparison > 1 || heightComparison > 1))){
 			var old_zoom = parseFloat(document.getElementById(options.id+'_zoom').value);
 			if (widthComparison > heightComparison){
 				var zoom = 1 / widthComparison;
@@ -533,7 +533,7 @@ var ImageCutter = function(options){
 			var cropped_img = new Image(); // create a second image from the first image
 			cropped_img.src = image.src;
 			console.log(document.getElementById(options.id+'_zoom').value);
-			if (document.getElementById(options.id+'_zoom').value != 1){
+			if (document.getElementById(options.id+'_zoom').value !== 1){
 				console.log('check!');
 				var init_zoom = parseFloat(document.getElementById(options.id+'_zoom').value);
 				cropped_img.style.width = (parseInt(cropped_img.style.width) * init_zoom) + 'px';
@@ -554,7 +554,7 @@ var ImageCutter = function(options){
 			cropped_img_div.style.border = 'none';
 			cropped_img_div.style.left = startX + "px";
 			cropped_img_div.style.top = startY + "px";
-			if (options.minWidth != 0){ // if we have a minimun width, set that
+			if (options.minWidth !== 0){ // if we have a minimun width, set that
 				cropped_img_div.style.width = options.minWidth + "px";
 				if (startX + options.minWidth > parseInt(shadowbox.style.width)){ 
 					// if minimum width takes us past the edge, move back
@@ -564,7 +564,7 @@ var ImageCutter = function(options){
 			} else { // if no minimum width, start the width at 1px
 				cropped_img_div.style.width = "1px";
 			}
-			if (options.minHeight != 0){ // if we have a minimum height, set that
+			if (options.minHeight !== 0){ // if we have a minimum height, set that
 				cropped_img_div.style.height = options.minHeight + "px";
 				if (startY + options.minHeight > parseInt(shadowbox.style.height)){
 					// if minimum height takes us past the edge, move back
@@ -609,7 +609,7 @@ var ImageCutter = function(options){
 			var arrowClassPrefix = (options.arrowClass === '') ? '' : options.arrowClass + ' ';
 			
 			// create pointers to drag box around
-			if (options.fixedHeight == 0 && options.fixedRatio == 0){ 
+			if (options.fixedHeight === 0 && options.fixedRatio === 0){ 
 				// Only add up & down arrows if we don't have fixed height or fixed ratio
 				if (options.swapArrows){ // if specified, we make div's instead of spans
 					var up_pointer = document.createElement('div');
@@ -646,7 +646,7 @@ var ImageCutter = function(options){
 				cropped_img_div.appendChild(down_pointer);
 			}
 			
-			if (options.fixedWidth == 0 && options.fixedRatio == 0){
+			if (options.fixedWidth === 0 && options.fixedRatio === 0){
 				// Only add left & right arrows if we don't have fixed width or fixed ratio
 				if (options.swapArrows){ // right arrow
 					var right_pointer = document.createElement('div');
@@ -683,7 +683,7 @@ var ImageCutter = function(options){
 				cropped_img_div.appendChild(left_pointer);
 			}
 			
-			if (options.fixedHeight == 0 && options.fixedWidth == 0){
+			if (options.fixedHeight === 0 && options.fixedWidth === 0){
 				// only add corner arrows if we don't have fixed height or fixed width
 				if (options.swapArrows){ // right down arrow
 					var rdown_pointer = document.createElement('div');
@@ -768,7 +768,7 @@ var ImageCutter = function(options){
 				shadowbox.addEventListener('mousemove', set_selection, false);
 				document.addEventListener('mouseup', save_selection, false);
 				cropped_img_div.addEventListener('mousedown', move_selection, false);
-				if (options.fixedHeight == 0 && options.fixedRatio == 0){
+				if (options.fixedHeight === 0 && options.fixedRatio === 0){
 					up_pointer.addEventListener('touchstart', function(e){
 						resizeDir = 'n';
 						start_resize(e);
@@ -787,7 +787,7 @@ var ImageCutter = function(options){
 						start_resize(e);
 					}, false);
 				}
-				if (options.fixedWidth == 0 && options.fixedRatio == 0){
+				if (options.fixedWidth === 0 && options.fixedRatio === 0){
 					right_pointer.addEventListener('touchstart', function(e){
 						resizeDir = 'e';
 						start_resize(e);
@@ -806,7 +806,7 @@ var ImageCutter = function(options){
 						start_resize(e);
 					}, false);
 				}
-				if (options.fixedHeight == 0 && options.fixedWidth == 0){
+				if (options.fixedHeight === 0 && options.fixedWidth === 0){
 					rup_pointer.addEventListener('touchstart', function(e){
 						resizeDir = 'ne';
 						start_resize(e);
@@ -852,7 +852,7 @@ var ImageCutter = function(options){
 				shadowbox.attachEvent('onmousemove', set_selection);
 				document.attachEvent('onmouseup', save_selection);
 				cropped_img_div.attachEvent('onmousedown', move_selection);
-				if (options.fixedHeight == 0 && options.fixedRatio == 0){
+				if (options.fixedHeight === 0 && options.fixedRatio === 0){
 					up_pointer.attachEvent('onmousedown', function(e){
 						resizeDir = 'n';
 						start_resize(e);
@@ -862,7 +862,7 @@ var ImageCutter = function(options){
 						start_resize(e);
 					});
 				}
-				if (options.fixedWidth == 0 && options.fixedRatio == 0){
+				if (options.fixedWidth === 0 && options.fixedRatio === 0){
 					right_pointer.attachEvent('onmousedown', function(e){
 						resizeDir = 'e';
 						start_resize(e);
@@ -873,7 +873,7 @@ var ImageCutter = function(options){
 					});
 				}
 				
-				if (options.fixedHeight == 0 && options.fixedWidth == 0){
+				if (options.fixedHeight === 0 && options.fixedWidth === 0){
 					rup_pointer.attachEvent('onmousedown', function(e){
 						resizeDir = 'ne';
 						start_resize(e);
@@ -904,32 +904,32 @@ var ImageCutter = function(options){
 	function set_selection(){
 		
 		// set boolean values for if we are withing minimum and maximum widths and heights (if specified)
-		var widthLimits = (options.maxWidth != 0) ? (Math.abs(startX - mouseX) <= options.maxWidth) : true;
-		var heightLimits = (options.maxHeight != 0) ? (Math.abs(startY - mouseY) <= options.maxHeight) : true;
-		var minWidthLimits = (options.minWidth != 0) ? (Math.abs(startX - mouseX) >= options.minWidth) : true;
-		var minHeightLimits = (options.minHeight != 0) ? (Math.abs(startY - mouseY) >= options.minHeight) : true;
+		var widthLimits = (options.maxWidth !== 0) ? (Math.abs(startX - mouseX) <= options.maxWidth) : true;
+		var heightLimits = (options.maxHeight !== 0) ? (Math.abs(startY - mouseY) <= options.maxHeight) : true;
+		var minWidthLimits = (options.minWidth !== 0) ? (Math.abs(startX - mouseX) >= options.minWidth) : true;
+		var minHeightLimits = (options.minHeight !== 0) ? (Math.abs(startY - mouseY) >= options.minHeight) : true;
 		
 		if (options.startingSelection){ // if there is a starting selection we should be making
-			if (options.startingWidth == 'full' || options.startingWidth > parseInt(shadowbox.style.width) - startX){
+			if (options.startingWidth === 'full' || options.startingWidth > parseInt(shadowbox.style.width) - startX){
 				// if it should be full, or selection is big enough to go to right edge ... 
 				document.getElementById(cropped_img_div_id).style.width = (parseInt(shadowbox.style.width) - startX) + "px";
 			} else {
 				document.getElementById(cropped_img_div_id).style.width = options.startingWidth + "px";
 			}
 			
-			if (options.startingHeight == 'full' || options.startingHeight > parseInt(shadowbox.style.height) - startY){
+			if (options.startingHeight === 'full' || options.startingHeight > parseInt(shadowbox.style.height) - startY){
 				// if it should be full, or selection is big enough to go to bottom edge...
 				document.getElementById(cropped_img_div_id).style.height = (parseInt(shadowbox.style.height) - startY) + "px";
 			} else {
 				document.getElementById(cropped_img_div_id).style.height = options.startingHeight + "px";
 			}
-		} else if (options.fixedRatio != 0){ // if we have a fixed ratio
+		} else if (options.fixedRatio !== 0){ // if we have a fixed ratio
 			// more booleans for staying within specified minimum and maximum heights and widths (if specified)
 			// these are in terms of the opposite axis, since both are moving at once and connected
-			var widthLimitsY = (options.maxWidth != 0) ? (Math.abs((mouseY-startY)*options.fixedRatio) <= options.maxWidth) : true;
-			var heightLimitsX = (options.maxHeight != 0) ? (Math.abs((startX - mouseX)/options.fixedRatio) <= options.maxHeight) : true;
-			var minWidthLimitsY = (options.minWidth != 0) ? (Math.abs((mouseY-startY)*options.fixedRatio) >= options.minWidth) : true;
-			var minHeightLimitsX = (options.minHeight != 0) ? (Math.abs((startX - mouseX)/options.fixedRatio) >= options.minHeight) : true;
+			var widthLimitsY = (options.maxWidth !== 0) ? (Math.abs((mouseY-startY)*options.fixedRatio) <= options.maxWidth) : true;
+			var heightLimitsX = (options.maxHeight !== 0) ? (Math.abs((startX - mouseX)/options.fixedRatio) <= options.maxHeight) : true;
+			var minWidthLimitsY = (options.minWidth !== 0) ? (Math.abs((mouseY-startY)*options.fixedRatio) >= options.minWidth) : true;
+			var minHeightLimitsX = (options.minHeight !== 0) ? (Math.abs((startX - mouseX)/options.fixedRatio) >= options.minHeight) : true;
 			
 			if (mouseX - startX > mouseY - startY){ // if X axis is moved more...
 				if (mouseX <= parseInt(shadowbox.style.width) && 
@@ -1025,7 +1025,7 @@ var ImageCutter = function(options){
 		
 		// if there is currently a cropped area, then save those coordinates to our hidden inputs
 		var cropped_img_div = document.getElementById(cropped_img_div_id);
-		if (cropped_img_div != null){
+		if (cropped_img_div !== null){
 			var zoom = parseFloat(document.getElementById(options.id + '_zoom').value);
 			document.getElementById(options.id+'_x1').value = parseInt(cropped_img_div.style.left) / zoom;
 			document.getElementById(options.id+'_y1').value = parseInt(cropped_img_div.style.top) / zoom;
@@ -1044,7 +1044,7 @@ var ImageCutter = function(options){
 		}
 		
 		// Allow us to select new areas (if not a fixed width or height)
-		if (options.fixedWidth == 0 && options.fixedHeight == 0){
+		if (options.fixedWidth === 0 && options.fixedHeight === 0){
 			ignoreRecrop = false;
 		}
 		
@@ -1142,7 +1142,7 @@ var ImageCutter = function(options){
 		
 		// add event handlers for dragging corners, and for saving the selection on mouse up
 		if (shadowbox.addEventListener){
-			if (options.fixedRatio != 0){ // different function for dragging corners when fixed ratio is turned on
+			if (options.fixedRatio !== 0){ // different function for dragging corners when fixed ratio is turned on
 				shadowbox.addEventListener('touchmove', selection_resize_fixed, false);
 				shadowbox.addEventListener('mousemove', selection_resize_fixed, false);
 			} else {
@@ -1152,7 +1152,7 @@ var ImageCutter = function(options){
 			document.addEventListener('touchend', save_selection, false);
 			document.addEventListener('mouseup', save_selection, false);
 		} else {
-			if (options.fixedRatio != 0){
+			if (options.fixedRatio !== 0){
 				shadowbox.attachEvent('onmousemove', selection_resize_fixed);
 			} else {
 				shadowbox.attachEvent('onmousemove', selection_resize);
@@ -1172,26 +1172,26 @@ var ImageCutter = function(options){
 		var cropped_img_div = document.getElementById(cropped_img_div_id);
 		
 		// booleans to make sure we stay within minimum and maximum boundaries on all four sides
-		var widthLimitsE = (options.maxWidth != 0) ? (cropWidth + diffX <= options.maxWidth) : true;
-		var widthLimitsW = (options.maxWidth != 0) ? (cropWidth - diffX <= options.maxWidth) : true;
-		var heightLimitsS = (options.maxHeight != 0) ? (cropHeight + diffY <= options.maxHeight) : true;
-		var heightLimitsN = (options.maxHeight != 0) ? (cropHeight - diffY <= options.maxHeight) : true;
-		var minWidthLimitsE = (options.minWidth != 0) ? (cropWidth + diffX >= options.minWidth) : true;
-		var minWidthLimitsW = (options.minWidth != 0) ? (cropWidth - diffX >= options.minWidth) : true;
-		var minHeightLimitsS = (options.minHeight != 0) ? (cropHeight + diffY >= options.minHeight) : true;
-		var minHeightLimitsN = (options.minHeight != 0) ? (cropHeight - diffY >= options.minHeight) : true;
+		var widthLimitsE = (options.maxWidth !== 0) ? (cropWidth + diffX <= options.maxWidth) : true;
+		var widthLimitsW = (options.maxWidth !== 0) ? (cropWidth - diffX <= options.maxWidth) : true;
+		var heightLimitsS = (options.maxHeight !== 0) ? (cropHeight + diffY <= options.maxHeight) : true;
+		var heightLimitsN = (options.maxHeight !== 0) ? (cropHeight - diffY <= options.maxHeight) : true;
+		var minWidthLimitsE = (options.minWidth !== 0) ? (cropWidth + diffX >= options.minWidth) : true;
+		var minWidthLimitsW = (options.minWidth !== 0) ? (cropWidth - diffX >= options.minWidth) : true;
+		var minHeightLimitsS = (options.minHeight !== 0) ? (cropHeight + diffY >= options.minHeight) : true;
+		var minHeightLimitsN = (options.minHeight !== 0) ? (cropHeight - diffY >= options.minHeight) : true;
 		
-		if (resizeDir == 'e' || resizeDir == 'ne' || resizeDir == 'se'){ // testing movement to the right
+		if (resizeDir === 'e' || resizeDir === 'ne' || resizeDir === 'se'){ // testing movement to the right
 			if ((cropLeft + cropWidth + diffX) <= parseInt(shadowbox.style.width) && widthLimitsE && minWidthLimitsE){
 				cropped_img_div.style.width = cropWidth + diffX + "px";
 			}
 		}
-		if (resizeDir == 's' || resizeDir == 'sw' || resizeDir == 'se'){ // testing movement downward
+		if (resizeDir === 's' || resizeDir === 'sw' || resizeDir === 'se'){ // testing movement downward
 			if ((cropTop + cropHeight + diffY) <= parseInt(shadowbox.style.height) && heightLimitsS && minHeightLimitsS){
 				cropped_img_div.style.height = cropHeight + diffY + "px";
 			}
 		}
-		if (resizeDir == 'w' || resizeDir == 'sw' || resizeDir == 'nw'){ // testing movement to the left
+		if (resizeDir === 'w' || resizeDir === 'sw' || resizeDir === 'nw'){ // testing movement to the left
 			if ((cropLeft + diffX) >= 0 && diffX <= cropWidth && widthLimitsW && minWidthLimitsW){
 				cropped_img_div.style.width = cropWidth - diffX + "px";
 				cropped_img_div.style.left = cropLeft + diffX + "px";
@@ -1199,7 +1199,7 @@ var ImageCutter = function(options){
 				backgroundPosX = -1 * (cropLeft + diffX);
 			} 
 		}
-		if (resizeDir == 'n' || resizeDir == 'nw' || resizeDir == 'ne'){ // testing movement upward
+		if (resizeDir === 'n' || resizeDir === 'nw' || resizeDir === 'ne'){ // testing movement upward
 			if ((cropTop + diffY) >= 0 && diffY <= cropHeight && heightLimitsN && minHeightLimitsN){
 				cropped_img_div.style.height = cropHeight - diffY + "px";
 				cropped_img_div.style.top = cropTop + diffY + "px";
@@ -1230,29 +1230,29 @@ var ImageCutter = function(options){
 		
 		// booleans for maximum and minimum limits. A test for each edge, both maximum and minimum, 
 		// and in terms of x and y (since they are linked together by a fixed ratio) 
-		var widthLimitsX = (options.maxWidth != 0) ? (cropWidth + diffX <= options.maxWidth) : true;
-		var widthLimitsY = (options.maxWidth != 0) ? (cropWidth + (diffY*options.fixedRatio) <= options.maxWidth) : true;
-		var heightLimitsX = (options.maxHeight != 0) ? (cropHeight + (diffX/options.fixedRatio) <= options.maxHeight) : true;
-		var heightLimitsY = (options.maxHeight != 0) ? (cropHeight + diffY <= options.maxHeight) : true;
-		var widthLimitsX2 = (options.maxWidth != 0) ? (cropWidth - diffX <= options.maxWidth) : true;
-		var widthLimitsY2 = (options.maxWidth != 0) ? (cropWidth - (diffY*options.fixedRatio) <= options.maxWidth) : true;
-		var heightLimitsX2 = (options.maxHeight != 0) ? (cropHeight - (diffX/options.fixedRatio) <= options.maxHeight) : true;
-		var heightLimitsY2 = (options.maxHeight != 0) ? (cropHeight - diffY <= options.maxHeight) : true;
+		var widthLimitsX = (options.maxWidth !== 0) ? (cropWidth + diffX <= options.maxWidth) : true;
+		var widthLimitsY = (options.maxWidth !== 0) ? (cropWidth + (diffY*options.fixedRatio) <= options.maxWidth) : true;
+		var heightLimitsX = (options.maxHeight !== 0) ? (cropHeight + (diffX/options.fixedRatio) <= options.maxHeight) : true;
+		var heightLimitsY = (options.maxHeight !== 0) ? (cropHeight + diffY <= options.maxHeight) : true;
+		var widthLimitsX2 = (options.maxWidth !== 0) ? (cropWidth - diffX <= options.maxWidth) : true;
+		var widthLimitsY2 = (options.maxWidth !== 0) ? (cropWidth - (diffY*options.fixedRatio) <= options.maxWidth) : true;
+		var heightLimitsX2 = (options.maxHeight !== 0) ? (cropHeight - (diffX/options.fixedRatio) <= options.maxHeight) : true;
+		var heightLimitsY2 = (options.maxHeight !== 0) ? (cropHeight - diffY <= options.maxHeight) : true;
 		
-		var minWidthLimitsX = (options.minWidth != 0) ? (cropWidth + diffX >= options.minWidth) : true;
-		var minWidthLimitsY = (options.minWidth != 0) ? (cropWidth + (diffY*options.fixedRatio) >= options.minWidth) : true;
-		var minHeightLimitsX = (options.minHeight != 0) ? (cropHeight + (diffX/options.fixedRatio) >= options.minHeight) : true;
-		var minHeightLimitsY = (options.minHeight != 0) ? (cropHeight + diffY >= options.minHeight) : true;
-		var minWidthLimitsX2 = (options.minWidth != 0) ? (cropWidth - diffX >= options.minWidth) : true;
-		var minWidthLimitsY2 = (options.minWidth != 0) ? (cropWidth - (diffY*options.fixedRatio) >= options.minWidth) : true;
-		var minHeightLimitsX2 = (options.minHeight != 0) ? (cropHeight - (diffX/options.fixedRatio) >= options.minHeight) : true;
-		var minHeightLimitsY2 = (options.minHeight != 0) ? (cropHeight - diffY >= options.minHeight) : true;
+		var minWidthLimitsX = (options.minWidth !== 0) ? (cropWidth + diffX >= options.minWidth) : true;
+		var minWidthLimitsY = (options.minWidth !== 0) ? (cropWidth + (diffY*options.fixedRatio) >= options.minWidth) : true;
+		var minHeightLimitsX = (options.minHeight !== 0) ? (cropHeight + (diffX/options.fixedRatio) >= options.minHeight) : true;
+		var minHeightLimitsY = (options.minHeight !== 0) ? (cropHeight + diffY >= options.minHeight) : true;
+		var minWidthLimitsX2 = (options.minWidth !== 0) ? (cropWidth - diffX >= options.minWidth) : true;
+		var minWidthLimitsY2 = (options.minWidth !== 0) ? (cropWidth - (diffY*options.fixedRatio) >= options.minWidth) : true;
+		var minHeightLimitsX2 = (options.minHeight !== 0) ? (cropHeight - (diffX/options.fixedRatio) >= options.minHeight) : true;
+		var minHeightLimitsY2 = (options.minHeight !== 0) ? (cropHeight - diffY >= options.minHeight) : true;
 		
-		if (resizeDir == 'se'){ // testing the southeast corner ...
+		if (resizeDir === 'se'){ // testing the southeast corner ...
 			if (Math.abs(diffX) > Math.abs(diffY)){ // if x moved further, test in terms of x
 				if ((cropLeft + cropWidth + diffX) <= parseInt(shadowbox.style.width) && 
 				(diffX/options.fixedRatio) + cropTop + cropHeight <= parseInt(shadowbox.style.height)){	 // within bounds
-					if (((diffX>0)==(diffY>0)) && minWidthLimitsX && widthLimitsX && minHeightLimitsX && heightLimitsX){
+					if (((diffX>0) === (diffY>0)) && minWidthLimitsX && widthLimitsX && minHeightLimitsX && heightLimitsX){
 						// test to make sure going the right direction and within max and min	
 						cropped_img_div.style.width = cropWidth + diffX + "px";
 						cropped_img_div.style.height = (diffX/options.fixedRatio) + cropHeight + "px";
@@ -1263,7 +1263,7 @@ var ImageCutter = function(options){
 			} else { // if y moved further, test in terms of y
 				if ((cropTop + cropHeight + diffY) <= parseInt(shadowbox.style.height) && 
 				(diffY*options.fixedRatio) + cropLeft + cropWidth <= parseInt(shadowbox.style.width)){	// within bounds
-					if (((diffX>0)==(diffY>0)) && minHeightLimitsY && heightLimitsY && minWidthLimitsY && widthLimitsY){
+					if (((diffX>0) === (diffY>0)) && minHeightLimitsY && heightLimitsY && minWidthLimitsY && widthLimitsY){
 						// test to make sure going the right direction and within max and min	
 						cropped_img_div.style.height = diffY + cropHeight + "px";
 						cropped_img_div.style.width = (diffY*options.fixedRatio) + cropWidth + "px";
@@ -1272,11 +1272,11 @@ var ImageCutter = function(options){
 					}
 				}
 			}
-		} else if (resizeDir == 'sw'){ // testing southwest corner
+		} else if (resizeDir === 'sw'){ // testing southwest corner
 			if (Math.abs(diffX) > Math.abs(diffY)){ // if x moved further, test in terms of x
 				if ((cropLeft - (-1*diffX)) >= 0 && 
 				((-1*diffX)/options.fixedRatio) + cropTop + cropHeight <= parseInt(shadowbox.style.height)){ // within bounds
-					if (((diffX>0)!=(diffY>0)) && minWidthLimitsX2 && widthLimitsX2 && minHeightLimitsX2 && heightLimitsX2){
+					if (((diffX>0) !== (diffY>0)) && minWidthLimitsX2 && widthLimitsX2 && minHeightLimitsX2 && heightLimitsX2){
 						// test to make sure going the right direction and within max and min	
 						cropped_img_div.style.width = cropWidth + (-1*diffX) + "px";
 						cropped_img_div.style.left = cropLeft - (-1*diffX) + "px";
@@ -1290,7 +1290,7 @@ var ImageCutter = function(options){
 			} else { // if y moved further, test in terms of y
 				if ((cropTop + cropHeight + diffY) <= parseInt(shadowbox.style.height) && 
 				cropLeft - (diffY*options.fixedRatio) >= 0){ // within bounds
-					if (((diffX>0)!=(diffY>0)) && minHeightLimitsY && heightLimitsY && minWidthLimitsY && widthLimitsY){
+					if (((diffX>0) !== (diffY>0)) && minHeightLimitsY && heightLimitsY && minWidthLimitsY && widthLimitsY){
 						// test to make sure going the right direction and within max and min		
 						cropped_img_div.style.height = diffY + cropHeight + "px";
 						cropped_img_div.style.width = (diffY*options.fixedRatio) + cropWidth + "px";
@@ -1302,11 +1302,11 @@ var ImageCutter = function(options){
 					}
 				}
 			}
-		} else if (resizeDir == 'ne'){ // testing northeast corner
+		} else if (resizeDir === 'ne'){ // testing northeast corner
 			if (Math.abs(diffX) > Math.abs(diffY)){ // if x moved further, test in terms of x
 				if ((cropLeft + cropWidth + diffX) <= parseInt(shadowbox.style.width) && 
 				cropTop - (diffX/options.fixedRatio) >= 0){ // within bounds
-					if (((diffX>0)!=(diffY>0)) && minWidthLimitsX && widthLimitsX && minHeightLimitsX && heightLimitsX){
+					if (((diffX>0) !== (diffY>0)) && minWidthLimitsX && widthLimitsX && minHeightLimitsX && heightLimitsX){
 						// test to make sure going the right direction and within max and min		
 						cropped_img_div.style.width = diffX + cropWidth + "px";
 						cropped_img_div.style.height = (diffX/options.fixedRatio) + cropHeight + "px";
@@ -1320,7 +1320,7 @@ var ImageCutter = function(options){
 			} else { // if y moved further, test in terms of y
 				if ((cropTop - (-1*diffY)) >= 0 && 
 				(-1*diffY*options.fixedRatio) + cropLeft + cropWidth <= parseInt(shadowbox.style.width)){ // within bounds
-					if (((diffX>0)!=(diffY>0)) && minHeightLimitsY2 && heightLimitsY2 && minWidthLimitsY2 && widthLimitsY2){
+					if (((diffX>0) !== (diffY>0)) && minHeightLimitsY2 && heightLimitsY2 && minWidthLimitsY2 && widthLimitsY2){
 						// test to make sure going the right direction and within max and min		
 						cropped_img_div.style.height = cropHeight + (-1*diffY) + "px";
 						cropped_img_div.style.top = cropTop - (-1*diffY) + "px";
@@ -1332,10 +1332,10 @@ var ImageCutter = function(options){
 					}
 				}
 			}
-		} else if (resizeDir == 'nw'){ // testing northwest corner
+		} else if (resizeDir === 'nw'){ // testing northwest corner
 			if (Math.abs(diffX) > Math.abs(diffY)){ // if x moved further, test in terms of x
 				if ((cropLeft - (-1*diffX)) >= 0 && cropTop - ((-1*diffX)/options.fixedRatio) >= 0){ // within bounds
-					if (((diffX>0)==(diffY>0)) && minWidthLimitsX2 && widthLimitsX2 && minHeightLimitsX2 && heightLimitsX2){
+					if (((diffX>0) === (diffY>0)) && minWidthLimitsX2 && widthLimitsX2 && minHeightLimitsX2 && heightLimitsX2){
 						// test to make sure going the right direction and within max and min	
 						cropped_img_div.style.width = cropWidth + (-1*diffX) + "px";
 						cropped_img_div.style.left = cropLeft - (-1*diffX) + "px";
@@ -1349,7 +1349,7 @@ var ImageCutter = function(options){
 				}
 			} else { // if y moved further, test in terms of y
 				if ((cropTop - (-1*diffY)) >= 0 && cropLeft - (-1*diffY*options.fixedRatio) >= 0){	// within bounds	
-					if (((diffX>0)==(diffY>0)) && minHeightLimitsY2 && heightLimitsY2 && minWidthLimitsY2 && widthLimitsY2){
+					if (((diffX>0) === (diffY>0)) && minHeightLimitsY2 && heightLimitsY2 && minWidthLimitsY2 && widthLimitsY2){
 						// test to make sure going the right direction and within max and min
 						cropped_img_div.style.height = cropHeight + (-1*diffY) + "px";
 						cropped_img_div.style.top = cropTop - (-1*diffY) + "px";
@@ -1441,7 +1441,7 @@ var ImageCutter = function(options){
 		},
 		destroy : function(return_size){ // clear out all of the created elements, and return image to normal
 			image_div.removeChild(coord_form);
-			if (options.clearBtn == 'clear' || options.clearBtn == 'full'){ image_div.removeChild(clear_button); }
+			if (options.clearBtn === 'clear' || options.clearBtn === 'full'){ image_div.removeChild(clear_button); }
 			if (options.zoomBtn){ image_div.removeChild(zoom_in_btn); image_div.removeChild(zoom_out_btn); }
 			image_div.removeChild(shadowbox);
 			
